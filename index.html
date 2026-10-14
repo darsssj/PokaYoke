@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f2347">
+<title>Poka Yoke: diseñar para que el error no ocurra | Ing. Métodos y Tiempos, UFPS</title>
+<meta name="description" content="Presentación interactiva sobre Poka Yoke (a prueba de errores): origen, enfoque aplicado, ejemplos, usos, herramientas y bibliografía. Ing. Métodos y Tiempos, UFPS.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Poka Yoke: diseñar para que el error no ocurra">
+<meta property="og:description" content="Presentación interactiva con detalles ampliados, autoevaluación y bibliografía.">
+<meta property="og:locale" content="es_CO">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230f2347'/%3E%3Cpath d='M8 8h11l5 5v11H8z' fill='%23ffc21a'/%3E%3C/svg%3E">
+<noscript><style>html,body{overflow:auto!important;height:auto!important}.deck{position:static!important}.slide{position:relative!important;opacity:1!important;visibility:visible!important;transform:none!important;min-height:100vh}.chrome-top,.chrome-bottom{display:none!important}</style></noscript>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-theme="dark">
+
+<!-- Iconos reutilizables -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-olvido" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-malentendido" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M12 8.5v3M12 13.8v.4"/></symbol>
+    <symbol id="i-identificacion" viewBox="0 0 24 24"><circle cx="10" cy="10" r="6"/><path d="M15 15l5 5"/></symbol>
+    <symbol id="i-inexperiencia" viewBox="0 0 24 24"><path d="M12 21v-9"/><path d="M12 12c0-4-3-6-7-6 0 4 3 6 7 6z"/><path d="M12 14c0-3 2-5 6-5 0 3-2 5-6 5z"/></symbol>
+    <symbol id="i-distraccion" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-estandar" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 9h8M8 13h8M8 17h5"/></symbol>
+  </defs>
+</svg>
+
+<a class="skip" href="#deck">Saltar al contenido</a>
+
+<header class="chrome-top" id="topbar">
+  <div class="tb-left">
+    <button class="icon-btn" id="menuBtn" aria-label="Abrir menú" aria-expanded="false" aria-controls="menu"><span class="burger" aria-hidden="true"></span></button>
+    <div class="brand"><span class="brand-key" aria-hidden="true"></span><span class="brand-t">Poka Yoke</span></div>
+  </div>
+  <div class="presenter" id="presenter" aria-live="polite"><span class="shape circle" id="pShape"></span><span id="pName">Expositor 1</span></div>
+  <div class="tb-right">
+    <button class="timer" id="timerChip" hidden title="Clic para iniciar o pausar el cronómetro">00:00</button>
+    <button class="icon-btn rotate-btn" id="rotateBtn" aria-label="Ver en horizontal" title="Ver en horizontal">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M3 9.5c0-3 2-5 5-5M21 14.5c0 3-2 5-5 5"/><path d="M6.2 3.2L8 4.5 6.4 6.2M17.8 20.8L16 19.5l1.6-1.7"/></svg>
+    </button>
+    <button class="icon-btn" id="fsBtn" aria-label="Pantalla completa" title="Pantalla completa (F)">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+    </button>
+  </div>
+</header>
+
+<main class="deck" id="deck">
+
+<!-- ============ EXPOSITOR 1 ============ -->
+
+<!-- 1. Portada -->
+<section class="slide dark hero" data-presenter="1" data-title="Portada">
+  <div class="hero-grid">
+    <div class="hero-copy">
+      <p class="jp" lang="ja">ポカヨケ</p>
+      <h1>Poka Yoke</h1>
+      <p class="lead">Diseñar el proceso para que el error no pueda ocurrir.</p>
+      <!-- EDITA AQUÍ los nombres de los integrantes. El orden define quién es Expositor 1, 2 y 3 -->
+      <ul class="team">
+        <li data-short="Manuel Gualdron" data-full="Manuel Felipe Gualdron Fuentes" data-code="1193344"><span class="shape circle"></span>Manuel Felipe Gualdron Fuentes <span class="cod">1193344</span></li>
+        <li data-short="Diego Ramirez" data-full="Diego Andres Ramirez Sanchez" data-code="1193368"><span class="shape square"></span>Diego Andres Ramirez Sanchez <span class="cod">1193368</span></li>
+        <li data-short="Jhorjan Gómez" data-full="Jhorjan Sebastián Gómez Arias" data-code="1193345"><span class="shape triangle"></span>Jhorjan Sebastián Gómez Arias <span class="cod">1193345</span></li>
+      </ul>
+      <p class="small">Ing. Métodos y Tiempos &nbsp;|&nbsp; Universidad Francisco de Paula Santander (UFPS)</p>
+      <div class="hero-cta"><button class="btn primary" data-act="next">Comenzar</button><button class="btn" data-act="menu">Ver índice</button><button class="btn" data-act="detail">Detalles</button></div>
+    </div>
+
+    <svg class="hero-art" viewBox="0 0 640 360" role="img" aria-label="Un conector con una esquina cortada intenta entrar al revés, el puerto lo rechaza, se gira y encaja">
+      <rect x="350" y="100" width="220" height="160" rx="22" class="port-wall"/>
+      <rect x="364" y="114" width="192" height="132" rx="12" class="port-hole"/>
+      <polygon points="506,114 556,114 556,164" class="port-key"/>
+      <g transform="translate(364 114)">
+        <g class="plug-body">
+          <path class="plug-shell" d="M12 0H142L192 50V120a12 12 0 0 1-12 12H12a12 12 0 0 1-12-12V12A12 12 0 0 1 12 0Z"/>
+          <g class="plug-pins">
+            <rect x="34" y="52" width="14" height="56" rx="4"/>
+            <rect x="64" y="52" width="14" height="56" rx="4"/>
+            <rect x="94" y="52" width="14" height="56" rx="4"/>
+            <rect x="124" y="52" width="14" height="56" rx="4"/>
+            <circle cx="30" cy="26" r="6"/>
+          </g>
+        </g>
+      </g>
+      <text class="lbl lbl-bad" x="320" y="318" text-anchor="middle">Al revés: no entra</text>
+      <text class="lbl lbl-ok" x="320" y="318" text-anchor="middle">Con la orientación correcta: entra</text>
+    </svg>
+  </div>
+  <div class="stripe" aria-hidden="true"></div>
+  <template class="detail">
+<h3>Qué encontrarás en esta página</h3>
+<p>Esta presentación explica el Poka Yoke (en español, «a prueba de errores») en tres partes. Cada parte la expone un integrante del grupo, pero aquí puedes recorrerla a tu ritmo y ampliar cada tema con el botón <b>Detalles</b>.</p>
+<ul>
+<li><b>Parte 1 (diapositivas 1 a 5):</b> concepto, origen, diferencia entre error y defecto, y tipos de error humano.</li>
+<li><b>Parte 2 (6 a 10):</b> enfoque aplicado: control y advertencia, métodos, estrategias, pasos para implementarlo y una demostración.</li>
+<li><b>Parte 3 (11 a 16):</b> ejemplos cotidianos e industriales, otros sectores, herramientas, beneficios y límites, y conclusiones.</li>
+<li><b>Material de consulta (17 y 18):</b> autoevaluación y bibliografía.</li>
+</ul>
+<h3>Cómo moverte</h3>
+<ul>
+<li>Usa las flechas del teclado, los botones ‹ ›, o desliza el dedo en el celular.</li>
+<li>El menú ☰ te lleva a cualquier diapositiva.</li>
+<li>En el celular puedes tocar el botón de girar para ver todo en horizontal.</li>
+</ul>
+<div class="d-callout"><b>Trabajo académico.</b> Realizado para la asignatura Ing. Métodos y Tiempos de la UFPS. Las fuentes están en la bibliografía.</div>
+</template>
+  <aside class="notes">
+    <h4>Apertura (~40 s) · Expositor 1</h4>
+    <ul>
+      <li>Presentarse y presentar a los otros dos expositores y el reparto: 1) origen y concepto, 2) enfoque aplicado, 3) ejemplos, usos y herramientas.</li>
+      <li>Señalar la animación: el conector no entra al revés, se gira y entra. Ese es todo el concepto en una imagen.</li>
+      <li>Pregunta de arranque para el público: ¿cuántas veces han puesto algo al revés sin darse cuenta?</li>
+    </ul>
+  </aside>
+</section>
+
+<!-- 2. Qué es -->
+<section class="slide light" data-presenter="1" data-title="Qué es">
+  <h2>Un mecanismo que evita el error o lo delata al instante</h2>
+  <div class="split">
+    <div>
+      <p class="lead">En japonés, <strong>poka</strong> es un error inadvertido y <strong>yoke</strong> viene de evitar. Es una idea sencilla: no confiar en que la persona nunca se distraiga, sino diseñar la tarea para que equivocarse sea difícil o imposible.</p>
+      <div class="pills">
+        <div class="card rv" tabindex="0"><h3>Simple y económico</h3><p>Muchas veces es una muesca, un color o un tope.</p></div>
+        <div class="card rv" tabindex="0"><h3>Dentro del proceso</h3><p>Actúa en el momento y lugar donde ocurre la tarea.</p></div>
+        <div class="card rv" tabindex="0"><h3>Respuesta inmediata</h3><p>Bloquea o avisa antes de que el error avance.</p></div>
+      </div>
+    </div>
+    <svg class="notch-art" viewBox="0 0 320 240" role="img" aria-label="Pieza con una esquina cortada y su encaje">
+      <path class="na-socket" d="M20 40h240a20 20 0 0 1 20 20v120a20 20 0 0 1-20 20H20z"/>
+      <polygon class="na-key" points="210,40 280,40 280,110"/>
+      <path class="na-piece" d="M0 70H190L260 140V210H0z" transform="translate(30 -10)"/>
+      <text x="160" y="228" text-anchor="middle" class="na-cap">Solo encaja en una posición</text>
+    </svg>
+  </div>
+  <template class="detail">
+<h3>El significado del nombre</h3>
+<p>El término viene del japonés: <b>ポカ (poka)</b> es un error inadvertido o descuido y <b>ヨケ (yoke)</b>, de <i>yokeru</i>, significa evitar. En español se suele traducir como «a prueba de errores»; en inglés, <i>mistake-proofing</i> o <i>error-proofing</i> (Gestiopolis, s. f.; TechTarget, s. f.).</p>
+<h3>Definición</h3>
+<p>Un poka yoke es cualquier mecanismo de un proceso que ayuda a quien opera a evitar errores: los previene, los corrige o llama la atención sobre ellos en el momento en que ocurren (TechTarget, s. f.; Wikipedia, s. f.-a). También se describe como una salvaguarda que impide que el proceso pase al siguiente paso hasta que se cumplan las condiciones correctas (TechTarget, s. f.).</p>
+<h3>Qué hace bueno a un Poka Yoke</h3>
+<ul>
+<li><b>Simple y barato.</b> En su libro de 1986, Shingo presenta 112 ejemplos de dispositivos y la mayoría costaba menos de 100 dólares (Shingo, 1986).</li>
+<li><b>Integrado al proceso.</b> Actúa donde y cuando se hace la tarea.</li>
+<li><b>Respuesta inmediata.</b> Frena o avisa antes de que el error avance.</li>
+</ul>
+<div class="d-callout"><b>Dentro del sistema de Shingo.</b> El Poka Yoke es una de las piezas del Control de Calidad Cero, que combina la inspección en la fuente con dispositivos Poka Yoke (Shingo, 1986; EcuRed, s. f.).</div>
+</template>
+  <aside class="notes">
+    <h4>Definición (~1 min) · Expositor 1</h4>
+    <ul>
+      <li>Explicar el término: ポカ (poka) = error por descuido; ヨケ (yoke) = evitar.</li>
+      <li>Definición propia: cualquier dispositivo o método que previene un error humano o lo hace visible de inmediato.</li>
+      <li>Las tres características: simple y económico, integrado al proceso, respuesta inmediata. Pasar el cursor sobre cada tarjeta para ver cómo se abre la muesca.</li>
+    </ul>
+  </aside>
+</section>
+
+<!-- 3. Origen -->
+<section class="slide dark" data-presenter="1" data-title="Origen">
+  <h2>Nació en una fábrica, a partir de un resorte olvidado</h2>
+  <div class="split split-img">
+    <ol class="timeline-v">
+      <li class="rv"><b>1909 – 1990</b><span>Shigeo Shingo, ingeniero industrial japonés y asesor de Toyota. Formalizó el Poka Yoke dentro de su sistema de Control de Calidad Cero.</span></li>
+      <li class="rv"><b>1961</b><span>En la planta de Yamada Electric, a veces se olvidaba un resorte bajo un botón de un interruptor. Shingo dividió la tarea en dos pasos: primero poner los dos resortes en un recipiente y luego montarlos. Si sobraba un resorte, el olvido se notaba al instante.</span></li>
+      <li class="rv"><b>Años 60</b><span>Primero lo llamó <em>baka-yoke</em> («a prueba de tontos»). Lo cambió a <em>poka-yoke</em> porque el primer nombre resultaba ofensivo para los operarios.</span></li>
+      <li class="rv"><b>1986 y 1988</b><span>Se publican en inglés <em>Zero Quality Control</em> (1986), de Shingo, y <em>Poka-Yoke</em> (1988), compilado por Nikkan Kogyo Shimbun con prefacio de Shingo.</span></li>
+    </ol>
+    <figure class="shot tall" data-img="origen-fabrica" data-alt="Ilustración de una fábrica con operarios en una línea de ensamble"><figcaption>images/origen-fabrica.jpg</figcaption></figure>
+  </div>
+  <template class="detail">
+<h3>Quién fue Shigeo Shingo</h3>
+<ul>
+<li>Nació el 8 de enero de 1909 en Saga (Japón) y murió el 14 de noviembre de 1990 (EcuRed, s. f.).</li>
+<li>Se graduó como ingeniero mecánico en 1930 y en los años 40 estudió y aplicó el control estadístico de la calidad (EcuRed, s. f.).</li>
+<li>Mantuvo una larga relación con la Japan Management Association y con Toyota (QualityGurus, s. f.).</li>
+<li>Hacia 1950 desarrolló la técnica SMED al dirigir un estudio de eficiencia para Toyo Kogyo (Mazda) (EcuRed, s. f.).</li>
+<li>El Shingo Prize for Operational Excellence reconoce a organizaciones de excelencia operacional y lleva su nombre (QualityGurus, s. f.).</li>
+</ul>
+<h3>La historia del resorte, con más detalle</h3>
+<p>En 1961, durante una visita a la planta de Yamada Electric, Shingo conoció un problema: un producto incluía un pequeño interruptor con dos botones sostenidos por dos resortes. A veces el operario olvidaba poner un resorte bajo un botón. En ocasiones el error se descubría cuando la unidad ya estaba con el cliente y la fábrica debía enviar a un técnico a desarmar el interruptor y colocar el resorte (Gestiopolis, s. f.; Saheb, s. f.).</p>
+<p>La solución fue dividir la tarea en dos pasos: preparar primero los dos resortes en un recipiente y luego montarlos desde allí. Si al terminar sobraba un resorte, el olvido era evidente antes de que el interruptor avanzara (Wikipedia, s. f.-a).</p>
+<h3>El nombre cambió por respeto</h3>
+<p>Al principio se llamó <i>baka-yoke</i>, «a prueba de tontos». Los operarios lo consideraron ofensivo y Shingo lo cambió a <i>poka-yoke</i> (TechTarget, s. f.; Gestiopolis, s. f.).</p>
+<h3>Los libros</h3>
+<ul>
+<li><i>Zero Quality Control: Source Inspection and the Poka-Yoke System</i> (Productivity Press, 1986): traducción al inglés, por Andrew P. Dillon, de la obra japonesa <i>Furyō zero e no chōsen</i>.</li>
+<li><i>Poka-Yoke: Improving Product Quality by Preventing Defects</i> (Productivity Press, 1988): compilado por Nikkan Kogyo Shimbun, con prefacio de Shingo. Reúne 240 ejemplos de plantas japonesas.</li>
+</ul>
+<div class="d-callout"><b>Ojo con las fechas.</b> Las fuentes no coinciden del todo: unas ubican el origen a finales de los años 50 y otras en los 60, y algunas dicen «planta de Toyota» en lugar de Yamada Electric. Aquí usamos la versión más repetida: la visita a Yamada Electric en 1961.</div>
+</template>
+  <aside class="notes">
+    <h4>Origen (~1 min) · Expositor 1</h4>
+    <ul>
+      <li>Shingo fue ingeniero industrial, nacido en 1909 y fallecido en 1990. Fue asesor de Toyota y formalizó el Poka Yoke como parte del Control de Calidad Cero, que combina inspección en la fuente con dispositivos a prueba de error.</li>
+      <li>Historia del resorte (1961, Yamada Electric): el interruptor tenía dos botones con un resorte cada uno y a veces se olvidaba uno. Solución: poner primero los dos resortes en un recipiente; si queda uno al terminar, se olvidó montarlo. Es un ejemplo de método de valor fijo.</li>
+      <li>El nombre: baka-yoke («a prueba de tontos») resultaba ofensivo para los operarios, así que se cambió a poka-yoke («evitar errores inadvertidos»).</li>
+      <li>Las fuentes difieren en pequeños detalles (algunas fechan el origen a finales de los 50 o hablan de «planta de Toyota»). Aquí usamos la versión más repetida. La imagen es una ilustración generada con IA, no una fotografía histórica.</li>
+    </ul>
+  </aside>
+</section>
+
+<!-- 4. Error vs defecto -->
+<section class="slide light" data-presenter="1" data-title="Error y defecto">
+  <h2>El error es inevitable; el defecto, no</h2>
+  <p class="lead narrow">Un error es la equivocación de una persona. Un defecto es el resultado de ese error cuando llega al producto o servicio y no cumple lo esperado. Si nadie lo detiene, puede llegar al cliente. Poka Yoke se pone en medio.</p>
+  <svg class="flow" viewBox="0 0 760 300" role="img" aria-label="Dos carriles: sin Poka Yoke el error llega al cliente como defecto; con Poka Yoke el error se detiene en la compuerta">
+    <text x="0" y="52" class="fl-title">Sin Poka Yoke</text>
+    <line x1="150" y1="90" x2="600" y2="90" class="fl-line"/>
+    <rect x="610" y="58" width="150" height="64" rx="10" class="fl-end bad"/>
+    <text x="685" y="96" text-anchor="middle" class="fl-end-t">Defecto en el cliente</text>
+    <circle cx="160" cy="90" r="9" class="dot bad pass d1"/><circle cx="160" cy="90" r="9" class="dot bad pass d2"/><circle cx="160" cy="90" r="9" class="dot bad pass d3"/>
+
+    <text x="0" y="202" class="fl-title">Con Poka Yoke</text>
+    <line x1="150" y1="240" x2="600" y2="240" class="fl-line"/>
+    <g class="gate"><path d="M360 196h34l16 16v56h-50z"/><text x="385" y="296" text-anchor="middle" class="fl-gate-t">Poka Yoke</text></g>
+    <rect x="610" y="208" width="150" height="64" rx="10" class="fl-end ok"/>
+    <text x="685" y="246" text-anchor="middle" class="fl-end-t">Producto conforme</text>
+    <circle cx="160" cy="240" r="9" class="dot bad stop d1"/><circle cx="160" cy="240" r="9" class="dot bad stop d2"/><circle cx="160" cy="240" r="9" class="dot bad stop d3"/>
+    <circle cx="470" cy="240" r="9" class="dot ok good d2"/>
+    <text x="150" y="130" class="fl-note">Errores humanos</text>
+  </svg>
+  <template class="detail">
+<h3>La idea central de Shingo</h3>
+<p>Los errores humanos son inevitables, pero los defectos se pueden evitar si el error se atrapa en su origen y no se deja avanzar. Un capítulo de su libro de 1986 se titula, precisamente, «Las inspecciones no reducen los defectos» (Shingo, 1986).</p>
+<h3>Tres tipos de inspección</h3>
+<ul>
+<li><b>Por juicio:</b> separa lo bueno de lo malo al final del proceso. Encuentra defectos, pero no los evita.</li>
+<li><b>Informativa:</b> usa los resultados de la inspección para corregir el proceso.</li>
+<li><b>En la fuente:</b> verifica las condiciones que podrían causar el error antes de que ocurra.</li>
+</ul>
+<p>Los dispositivos Poka Yoke permiten hacer esa verificación de manera automática en cada unidad, sin depender de muestreos.</p>
+<div class="d-callout"><b>Error y defecto no son lo mismo.</b> El error es la causa: algo que hace una persona. El defecto es el resultado: un producto o servicio que no cumple lo esperado. Si el error se detiene a tiempo, no llega a haber defecto.</div>
+<p class="d-src">Fuentes: Shingo (1986); Gestiopolis (s. f.); EcuRed (s. f.).</p>
+</template>
+  <aside class="notes">
+    <h4>Error vs. defecto (~1 min) · Expositor 1</h4>
+    <ul>
+      <li>Los puntos rojos son errores humanos: ocurren con cualquier persona, por cansancio, prisa o distracción.</li>
+      <li>Arriba el error pasa y llega al cliente como defecto. Abajo la compuerta lo detiene en el momento.</li>
+      <li>Idea central: no se trata de pedir «más cuidado», sino de cambiar el proceso. Pedir atención no escala; un diseño sí.</li>
+    </ul>
+  </aside>
+</section>
+
+<!-- 5. Tipos de error -->
+<section class="slide dark" data-presenter="1" data-title="Tipos de error">
+  <h2>Seis maneras en que las personas nos equivocamos</h2>
+  <p class="small hint">Seis de los diez tipos de error humano que suele citar la literatura de Poka Yoke. Los ejemplos son ilustrativos. Pasa el cursor o toca cada tarjeta.</p>
+  <div class="flips">
+    <div class="flip rv" tabindex="0"><div class="flip-in">
+      <div class="face front"><svg class="ico"><use href="#i-olvido"/></svg><h3>Olvido</h3><p>«Se me pasó un paso.»</p></div>
+      <div class="face back"><h3>Ejemplo</h3><p>Ensamblar sin el resorte del interruptor.</p><h3>Poka Yoke</h3><p>Bandeja con las piezas justas: si sobra una, falta una.</p></div>
+    </div></div>
+    <div class="flip rv" tabindex="0"><div class="flip-in">
+      <div class="face front"><svg class="ico"><use href="#i-malentendido"/></svg><h3>Malentendido</h3><p>«Entendí otra cosa.»</p></div>
+      <div class="face back"><h3>Ejemplo</h3><p>Interpretar mal una instrucción escrita.</p><h3>Poka Yoke</h3><p>Instrucciones con fotos y ejemplos de pieza buena y mala.</p></div>
+    </div></div>
+    <div class="flip rv" tabindex="0"><div class="flip-in">
+      <div class="face front"><svg class="ico"><use href="#i-identificacion"/></svg><h3>Identificación errónea</h3><p>«Tomé la pieza equivocada.»</p></div>
+      <div class="face back"><h3>Ejemplo</h3><p>Usar un tornillo M6 donde va un M8.</p><h3>Poka Yoke</h3><p>Códigos de color y contenedores con forma propia.</p></div>
+    </div></div>
+    <div class="flip rv" tabindex="0"><div class="flip-in">
+      <div class="face front"><svg class="ico"><use href="#i-inexperiencia"/></svg><h3>Error de principiante</h3><p>«Es mi primera vez.»</p></div>
+      <div class="face back"><h3>Ejemplo</h3><p>Una persona nueva ajusta mal una máquina.</p><h3>Poka Yoke</h3><p>Guías, topes y secuencias que solo permiten el orden correcto.</p></div>
+    </div></div>
+    <div class="flip rv" tabindex="0"><div class="flip-in">
+      <div class="face front"><svg class="ico"><use href="#i-distraccion"/></svg><h3>Error inadvertido</h3><p>«Lo hice sin darme cuenta.»</p></div>
+      <div class="face back"><h3>Ejemplo</h3><p>Cerrar un documento sin guardar.</p><h3>Poka Yoke</h3><p>Mensaje de confirmación o sensor de presencia con alarma.</p></div>
+    </div></div>
+    <div class="flip rv" tabindex="0"><div class="flip-in">
+      <div class="face front"><svg class="ico"><use href="#i-estandar"/></svg><h3>Falta de estándares</h3><p>«Cada quien lo hace distinto.»</p></div>
+      <div class="face back"><h3>Ejemplo</h3><p>Cada turno regula la máquina a su manera.</p><h3>Poka Yoke</h3><p>Estándar visual y topes mecánicos con la medida correcta.</p></div>
+    </div></div>
+  </div>
+  <template class="detail">
+<h3>Los diez tipos de error humano</h3>
+<p>La literatura de Poka Yoke suele citar diez tipos de error humano (Elsmar Cove, s. f.). En la diapositiva mostramos seis; esta es la lista completa:</p>
+<dl class="d-dl">
+<dt>Olvido</dt><dd>Se olvidan cosas cuando no hay concentración.</dd>
+<dt>Malentendido</dt><dd>Se saca una conclusión equivocada antes de conocer bien la situación.</dd>
+<dt>Identificación errónea</dt><dd>Se juzga mal una situación porque se ve muy rápido o desde lejos. Ejemplo: confundir un billete de 1 con uno de 10.</dd>
+<dt>Error de principiante</dt><dd>Falta de experiencia. Ejemplo: un trabajador nuevo que no conoce bien la operación.</dd>
+<dt>Error voluntario</dt><dd>Se decide ignorar una regla en ciertas circunstancias. Ejemplo: cruzar con semáforo en rojo porque no vienen carros.</dd>
+<dt>Error inadvertido</dt><dd>Se actúa distraído y sin saber cómo ocurrió el error.</dd>
+<dt>Lentitud</dt><dd>Las acciones se retrasan por demoras en el juicio.</dd>
+<dt>Falta de estándares</dt><dd>No hay instrucciones o estándares de trabajo adecuados.</dd>
+<dt>Sorpresa</dt><dd>El equipo se comporta de forma distinta a la esperada.</dd>
+<dt>Error intencional</dt><dd>Se comete a propósito, como en el sabotaje.</dd>
+</dl>
+<div class="d-callout"><b>Qué puede y qué no puede hacer el Poka Yoke.</b> Funciona muy bien con errores no deliberados (olvidos, distracciones, confusiones). Los errores voluntarios o intencionales son más difíciles de frenar solo con diseño.</div>
+<p class="d-src">Los ejemplos de la diapositiva son ilustrativos.</p>
+</template>
+  <aside class="notes">
+    <h4>Tipos de error (~1 min 20 s) · Expositor 1 cierra su parte</h4>
+    <ul>
+      <li>La literatura de Poka Yoke suele citar diez tipos de error humano: olvido, malentendido, identificación errónea, principiante, voluntario, inadvertido, lentitud, falta de estándares, sorpresa e intencional. Aquí mostramos seis; los ejemplos son ilustrativos.</li>
+      <li>Voltear 2 o 3 tarjetas durante la exposición; no hace falta voltear las seis.</li>
+      <li>Mensaje de cierre: cada tipo de error pide un Poka Yoke distinto. Eso nos lleva a la parte 2: cómo se aplica. Pasar la palabra al Expositor 2.</li>
+    </ul>
+  </aside>
+</section>
+
+<!-- ============ EXPOSITOR 2 ============ -->
+
+<!-- 6. Control vs advertencia -->
+<section class="slide light" data-presenter="2" data-title="Control y advertencia">
+  <h2>Dos respuestas al error: impedirlo o avisarlo</h2>
+  <div class="duo">
+    <article class="panel ctrl" tabindex="0">
+      <h3>Método de control</h3>
+      <p class="big">Si algo está mal, el proceso no avanza.</p>
+      <p>Detiene la máquina o bloquea la operación siguiente hasta que se cumplan las condiciones correctas.</p>
+      <p class="more">Ejemplos: la puerta abierta del microondas impide emitir microondas; una pieza que solo encaja en una posición; una atornilladora que no libera la pieza hasta completar todos los tornillos.</p>
+      <span class="tag ok">No depende de la reacción humana</span>
+    </article>
+    <article class="panel warn" tabindex="0">
+      <h3>Método de advertencia</h3>
+      <p class="big">Si algo está mal, alguien se entera de inmediato.</p>
+      <p>Emite una señal para que una persona corrija. Útil cuando detener el proceso no es posible o no conviene.</p>
+      <p class="more">Ejemplos: alerta sonora del cinturón de seguridad; luz roja tipo andon en una línea de producción; mensaje de error junto a un campo de un formulario.</p>
+      <span class="tag warn">Depende de la reacción humana</span>
+    </article>
+  </div>
+  <template class="detail">
+<h3>Los dos tipos en el vocabulario de Shingo</h3>
+<p>Shingo llamó <b>poka-yoke de control</b> al que impide que el proceso continúe cuando algo está mal, y <b>poka-yoke de advertencia</b> al que avisa para que alguien actúe (Wikipedia, s. f.-a).</p>
+<dl class="d-dl">
+<dt>Control</dt><dd>Detiene o bloquea el proceso. No depende de que alguien reaccione. Ejemplo: algunos carros impiden cerrar la puerta con seguro si la llave sigue en el contacto (TechTarget, s. f.).</dd>
+<dt>Advertencia</dt><dd>Emite una luz, un sonido o un mensaje. Sirve cuando detener el proceso no es posible o no es económico, pero depende de que la persona responda.</dd>
+</dl>
+<h3>Otra forma de verlo: prevención y detección</h3>
+<p>Algunos autores distinguen el poka-yoke de prevención, que actúa antes de que ocurra el defecto, y el de detección, que avisa cuando el error ya se cometió (RNA Automation, s. f.). Es una clasificación parecida, vista desde el momento en que actúa el dispositivo.</p>
+<div class="d-callout"><b>Criterio práctico.</b> Si es posible, conviene un dispositivo de control, porque el error no avanza. Si detener el proceso no es viable, se usa una advertencia y se cuida que la señal sea clara, inmediata y difícil de ignorar.</div>
+</template>
+  <aside class="notes">
+    <h4>Control vs. advertencia (~1 min) · Expositor 2 abre</h4>
+    <ul>
+      <li>Retomar el hilo: ya vimos qué es y por qué se equivocan las personas. Ahora, cómo se aplica.</li>
+      <li>Son los dos tipos de Poka Yoke en el vocabulario de Shingo: el de control detiene el proceso y el de advertencia avisa.</li>
+      <li>Control: no depende de que alguien reaccione. Advertencia: sí depende, pero sirve cuando no se puede detener el proceso.</li>
+      <li>Pasar el cursor sobre cada panel para ver ejemplos concretos.</li>
+    </ul>
+  </aside>
+</section>
+
+<!-- 7. Tres métodos -->
+<section class="slide dark" data-presenter="2" data-title="Tres métodos">
+  <h2>Tres métodos para revisar que la tarea salió bien</h2>
+  <div class="trio">
+    <article class="card rv" tabindex="0">
+      <svg viewBox="0 0 140 90" class="mini" aria-hidden="true"><path class="m-a" d="M10 15h80l30 30v30H10z"/><path class="m-b" d="M95 15h35v35z" opacity=".35"/></svg>
+      <h3>Contacto</h3>
+      <p>Revisa forma, tamaño o color de la pieza. Si no coincide, no encaja o no se detecta.</p>
+      <p class="more">Ejemplo: tarjeta SIM con esquina cortada; guía que rechaza piezas de otro tamaño.</p>
+    </article>
+    <article class="card rv" tabindex="0">
+      <svg viewBox="0 0 140 90" class="mini" aria-hidden="true"><rect class="m-a" x="10" y="15" width="120" height="60" rx="6"/><g class="m-b"><circle cx="38" cy="45" r="9"/><circle cx="66" cy="45" r="9"/><circle cx="94" cy="45" r="9"/><circle cx="122" cy="45" r="0"/></g></svg>
+      <h3>Valor fijo</h3>
+      <p>Comprueba que se haya hecho un número determinado de veces o con una cantidad exacta de piezas.</p>
+      <p class="more">Ejemplo: la bandeja con los resortes justos, o la atornilladora que cuenta cada tornillo.</p>
+    </article>
+    <article class="card rv" tabindex="0">
+      <svg viewBox="0 0 140 90" class="mini" aria-hidden="true"><rect class="m-a" x="8" y="28" width="30" height="34" rx="5"/><rect class="m-a" x="55" y="28" width="30" height="34" rx="5"/><rect class="m-b" x="102" y="28" width="30" height="34" rx="5" opacity=".4"/><path class="m-c" d="M40 45h12M87 45h12"/></svg>
+      <h3>Paso a paso</h3>
+      <p>Verifica que se cumplan todos los pasos en el orden correcto antes de pasar al siguiente.</p>
+      <p class="more">Ejemplo: la máquina no arranca hasta que se cierran la tapa y el seguro, en ese orden.</p>
+    </article>
+  </div>
+  <template class="detail">
+<h3>Cómo detecta el error cada método</h3>
+<dl class="d-dl">
+<dt>Contacto</dt><dd>Comprueba una característica física de la pieza, como su forma, tamaño o color (Vector Solutions, 2020). Ejemplo: la tarjeta SIM con esquina cortada; sin ella podría colocarse de cuatro maneras (All About Lean, s. f.).</dd>
+<dt>Valor fijo</dt><dd>Comprueba que se hayan hecho un número determinado de movimientos o que se usen las piezas exactas. Ejemplo: el recipiente con los dos resortes de Shingo.</dd>
+<dt>Paso a paso (movimiento-paso)</dt><dd>Comprueba que se cumplan todos los pasos del proceso en el orden correcto antes de continuar. Ejemplo: una máquina que no arranca hasta que se cumplen las condiciones previas.</dd>
+</dl>
+<p>Los métodos también se pueden combinar en un mismo dispositivo (QMS2Go, s. f.).</p>
+<div class="d-callout"><b>No los confundas con control y advertencia.</b> Los tres métodos describen <i>cómo se detecta</i> el error. Control y advertencia describen <i>qué hace</i> el dispositivo cuando lo detecta. Un mismo dispositivo combina las dos cosas: por ejemplo, un sensor de contacto (método) que detiene la máquina (control).</div>
+<p class="d-src">Los ejemplos de valor fijo y paso a paso son ilustrativos.</p>
+</template>
+  <aside class="notes">
+    <h4>Los tres métodos (~1 min) · Expositor 2</h4>
+    <ul>
+      <li>Son las tres formas clásicas que describió Shingo para detectar el error en el proceso: por contacto, por valor fijo y por pasos o movimientos.</li>
+      <li>Contacto: se fija en la forma. Valor fijo: se fija en la cantidad. Paso a paso: se fija en la secuencia.</li>
+      <li>Volver a mencionar el resorte de Yamada Electric como ejemplo de valor fijo.</li>
+    </ul>
+  </aside>
+</section>
+
+<!-- 8. Seis estrategias -->
+<section class="slide light" data-presenter="2" data-title="Seis estrategias">
+  <h2>Seis estrategias, en orden de prioridad</h2>
+  <p class="small hint">Es una clasificación habitual en la literatura de mistake-proofing y el orden puede variar entre autores. Las cuatro primeras evitan que el error ocurra; las dos últimas limitan sus efectos. Pasa el cursor para ver un ejemplo.</p>
+  <ol class="steps6">
+    <li style="--h:100%" tabindex="0"><b>Eliminación</b><span>Quitar el paso o la pieza que causa el error.</span><em>Rediseñar para que el paso ya no sea necesario.</em></li>
+    <li style="--h:87%" tabindex="0"><b>Prevención</b><span>Diseñar para que el error sea imposible.</span><em>Muesca que fuerza una sola posición.</em></li>
+    <li style="--h:75%" tabindex="0"><b>Reemplazo</b><span>Cambiar por un proceso más fiable.</span><em>Una máquina en lugar de una tarea manual repetitiva.</em></li>
+    <li style="--h:63%" tabindex="0"><b>Facilitación</b><span>Hacer que lo correcto sea lo más fácil.</span><em>Colores, etiquetas y plantillas visibles.</em></li>
+    <li style="--h:52%" tabindex="0"><b>Detección</b><span>Notar el error a tiempo y avisar.</span><em>Sensor de presencia con alarma.</em></li>
+    <li style="--h:42%" tabindex="0"><b>Mitigación</b><span>Reducir el daño si el error ocurre.</span><em>Fusible o parada de emergencia.</em></li>
+  </ol>
+  <template class="detail">
+<h3>Qué significa cada una</h3>
+<dl class="d-dl">
+<dt>Eliminación</dt><dd>Rediseñar el producto o el proceso para que la tarea o la pieza propensa al error ya no sea necesaria (McBride, s. f.).</dd>
+<dt>Prevención</dt><dd>Diseñar de modo que sea imposible cometer el error (McBride, s. f.).</dd>
+<dt>Reemplazo</dt><dd>Sustituir un proceso poco confiable por uno más confiable (McBride, s. f.).</dd>
+<dt>Facilitación</dt><dd>Hacer más fácil la acción correcta, por ejemplo agrupando o simplificando pasos (McBride, s. f.; MRPeasy, s. f.).</dd>
+<dt>Detección</dt><dd>Descubrir el error antes de que pase al siguiente paso para corregirlo rápido (McBride, s. f.).</dd>
+<dt>Mitigación</dt><dd>Reducir los efectos del error cuando ocurre. Ejemplo: un fusible que limita el daño de un cortocircuito.</dd>
+</dl>
+<div class="d-callout"><b>El orden varía según el autor.</b> Algunos colocan «reemplazo» antes que «prevención» y otros al revés, pero en las fuentes consultadas la eliminación va primero y la mitigación al final (McBride, s. f.; RNA Automation, s. f.). Además, las cuatro primeras evitan que el error ocurra y las dos últimas reducen sus efectos una vez ocurrido (RNA Automation, s. f.).</div>
+<p>No la confundas con los tres métodos de Shingo (contacto, valor fijo y paso a paso): son clasificaciones distintas.</p>
+</template>
+  <aside class="notes">
+    <h4>Estrategias (~1 min) · Expositor 2</h4>
+    <ul>
+      <li>Leer la escalera de izquierda a derecha: lo mejor es que el error no pueda existir (eliminar); lo último es limitar el daño (mitigar).</li>
+      <li>Aclarar que es una clasificación habitual en la literatura de mistake-proofing y que algunos autores cambian el orden de reemplazo y prevención; no confundirla con los tres métodos de Shingo.</li>
+      <li>Recomendación práctica: antes de poner una alarma, preguntarse si se puede eliminar o prevenir.</li>
+    </ul>
+  </aside>
+</section>
+
+<!-- 9. Pasos -->
+<section class="slide dark" data-presenter="2" data-title="Cómo aplicarlo">
+  <h2>Cinco pasos para llevarlo a un proceso real</h2>
+  <p class="small hint">Secuencia sugerida, basada en prácticas habituales de mejora continua.</p>
+  <ol class="timeline-h">
+    <li class="rv"><span class="n">1</span><h3>Elige el problema</h3><p>Usa datos: ¿qué defecto se repite más? Un diagrama de Pareto ayuda a decidir.</p></li>
+    <li class="rv"><span class="n">2</span><h3>Busca la causa raíz</h3><p>5 porqués o diagrama de Ishikawa, pero en el lugar de trabajo.</p></li>
+    <li class="rv"><span class="n">3</span><h3>Diseña el dispositivo</h3><p>Control o advertencia; contacto, valor fijo o secuencia.</p></li>
+    <li class="rv"><span class="n">4</span><h3>Pruébalo</h3><p>Piloto con quienes lo usan. Intenta burlarlo a propósito.</p></li>
+    <li class="rv"><span class="n">5</span><h3>Estandariza y mide</h3><p>Actualiza la instrucción de trabajo y sigue el indicador de defectos.</p></li>
+  </ol>
+  <template class="detail">
+<h3>Los cinco pasos, con más detalle</h3>
+<p>Es una secuencia sugerida a partir de prácticas habituales de mejora continua (MRPeasy, s. f.; RNA Automation, s. f.).</p>
+<ol class="d-ol">
+<li><b>Elige el problema.</b> Reúne datos de defectos y prioriza los que más se repiten. El diagrama de Pareto sirve para ver cuáles pocos defectos causan la mayor parte de los problemas.</li>
+<li><b>Busca la causa raíz.</b> Usa los 5 porqués o el diagrama de Ishikawa y ve al lugar donde se hace el trabajo (<i>gemba</i>) a hablar con quienes lo realizan.</li>
+<li><b>Diseña el dispositivo.</b> Decide si será de control o de advertencia, qué método usará (contacto, valor fijo o paso a paso) y, si se puede, intenta primero eliminar o prevenir el error. Un buen Poka Yoke debe ser simple y barato (RNA Automation, s. f.).</li>
+<li><b>Pruébalo.</b> Haz una prueba piloto con quienes lo van a usar. Verifica que funcione y que no estorbe; intenta burlarlo a propósito. Los hornos microondas, por ejemplo, deben tener un monitoreo que los deje inoperantes si un seguro de puerta falla (FDA, s. f.): un Poka Yoke también hay que vigilarlo.</li>
+<li><b>Estandariza y mide.</b> Actualiza la instrucción de trabajo, capacita y sigue el indicador de defectos. La eficacia se revisa de forma continua y se ajusta si hace falta (RNA Automation, s. f.).</li>
+</ol>
+<div class="d-callout"><b>Dos reglas populares de los Poka Yoke.</b> No esperes el Poka Yoke perfecto. Si tu idea tiene más del 50 % de probabilidad de funcionar, pruébala (Saheb, s. f.).</div>
+</template>
+  <aside class="notes">
+    <h4>Cómo aplicarlo (~1 min) · Expositor 2</h4>
+    <ul>
+      <li>Este sí es un proceso secuencial: por eso van numerados.</li>
+      <li>Paso 2: ir a ver el proceso (gemba) con los operarios; ellos suelen conocer la causa real.</li>
+      <li>Paso 4: probar si se puede puentear. Un dispositivo que estorba termina anulado por quien lo usa.</li>
+      <li>Paso 5 cierra el ciclo de mejora continua (planear, hacer, verificar, actuar).</li>
+    </ul>
+  </aside>
+</section>
+
+<!-- 10. Demo -->
+<section class="slide light" data-presenter="2" data-title="Demo interactiva">
+  <h2>Pruébalo: ¿entra o no entra?</h2>
+  <div class="demo">
+    <div class="demo-stage">
+      <svg id="demoSvg" viewBox="0 0 640 280" role="img" aria-label="Simulador de un conector que se inserta en un puerto">
+        <rect x="360" y="60" width="220" height="160" rx="22" class="port-wall"/>
+        <rect x="374" y="74" width="192" height="132" rx="12" class="port-hole"/>
+        <polygon id="demoKey" points="516,74 566,74 566,124" class="port-key"/>
+        <g transform="translate(374 74)">
+          <g id="demoPlug" class="plug-g">
+            <path id="demoShell" class="plug-shell" d="M12 0H142L192 50V120a12 12 0 0 1-12 12H12a12 12 0 0 1-12-12V12A12 12 0 0 1 12 0Z"/>
+            <g class="plug-pins">
+              <rect x="34" y="52" width="14" height="56" rx="4"/><rect x="64" y="52" width="14" height="56" rx="4"/>
+              <rect x="94" y="52" width="14" height="56" rx="4"/><rect x="124" y="52" width="14" height="56" rx="4"/>
+              <circle cx="30" cy="26" r="6"/>
+            </g>
+          </g>
+        </g>
+      </svg>
+      <p id="demoMsg" class="demo-msg" aria-live="polite">Gira el conector e inténtalo.</p>
+    </div>
+    <div class="demo-ctl">
+      <label class="switch"><input type="checkbox" id="demoToggle" checked><span class="knob"></span><span>Poka Yoke activado (esquina cortada)</span></label>
+      <div class="btns">
+        <button class="btn" id="demoRotate">Girar el conector</button>
+        <button class="btn primary" id="demoInsert">Insertar</button>
+      </div>
+      <div class="scores">
+        <div class="card"><b id="scSaved">0</b><span>errores evitados</span></div>
+        <div class="card"><b id="scDefects">0</b><span>defectos que llegaron al cliente</span></div>
+      </div>
+    </div>
+  </div>
+  <template class="detail">
+<h3>Qué muestra la simulación</h3>
+<p>El conector tiene una esquina cortada y el puerto, una guía que encaja con ella. Con el Poka Yoke activado, solo entra en una posición: si lo giras, la esquina choca con la guía y el error se evita sin que nadie tenga que estar atento. Al desactivarlo, el conector es simétrico y puede entrar al revés: el error pasa y se cuenta como defecto que llega al cliente.</p>
+<h3>Qué conceptos aparecen</h3>
+<ul>
+<li>Método de <b>contacto</b>: la forma de la pieza decide si encaja.</li>
+<li>Poka yoke de <b>control</b>: el error no avanza.</li>
+<li>Estrategia de <b>prevención</b>: el diseño hace imposible el error.</li>
+</ul>
+<p>Ejemplos reales con la misma lógica: la tarjeta SIM con la esquina cortada y el conector USB-A, que solo entra en una posición (All About Lean, s. f.).</p>
+<p class="d-src">La simulación es una representación didáctica, no un modelo de un conector real.</p>
+</template>
+  <aside class="notes">
+    <h4>Demostración (~1 min) · Expositor 2 cierra su parte</h4>
+    <ul>
+      <li>Con Poka Yoke activado: girar el conector y pulsar «Insertar». La esquina choca, el error se evita.</li>
+      <li>Desactivar el interruptor: ahora el conector es simétrico y entra al revés. El error pasa y suma un defecto.</li>
+      <li>Mensaje: la diferencia no es la atención de la persona, es el diseño de la pieza.</li>
+      <li>Pasar la palabra al Expositor 3 para ver dónde aparece esto en la vida real.</li>
+    </ul>
+  </aside>
+</section>
+
+<!-- ============ EXPOSITOR 3 ============ -->
+
+<!-- 11. Cotidianos -->
+<section class="slide dark" data-presenter="3" data-title="Ejemplos cotidianos">
+  <h2>Lo usas todos los días sin notarlo</h2>
+  <div class="grid3">
+    <article class="card ex rv" tabindex="0">
+      <figure class="shot" data-img="sim" data-alt="Tarjeta SIM con esquina cortada y su bandeja"><figcaption>images/sim.jpg</figcaption></figure>
+      <h3>Tarjeta SIM</h3><p>La esquina cortada solo permite una posición.</p><p class="more">Evita: colocarla en la posición equivocada. Sin esa esquina podría entrar de cuatro formas.</p>
+    </article>
+    <article class="card ex rv" tabindex="0">
+      <figure class="shot" data-img="microondas" data-alt="Microondas con la puerta abierta y el interruptor de seguridad resaltado"><figcaption>images/microondas.jpg</figcaption></figure>
+      <h3>Microondas</h3><p>Los interruptores de la puerta impiden emitir microondas con la puerta abierta.</p><p class="more">Evita: exposición a la radiación. En EE. UU., la norma de la FDA exige al menos dos seguros.</p>
+    </article>
+    <article class="card ex rv" tabindex="0">
+      <figure class="shot" data-img="surtidor" data-alt="Dos boquillas de combustible de distinto grosor"><figcaption>images/surtidor.jpg</figcaption></figure>
+      <h3>Surtidor de combustible</h3><p>La boquilla de diésel es más ancha y no entra en la mayoría de tanques de gasolina.</p><p class="more">Evita: poner diésel en un carro a gasolina. No evita el error contrario: la boquilla de gasolina sí cabe en un tanque diésel.</p>
+    </article>
+    <article class="card ex rv" tabindex="0">
+      <figure class="shot" data-img="cajero" data-alt="Cajero automático con la tarjeta saliendo"><figcaption>images/cajero.jpg</figcaption></figure>
+      <h3>Cajero automático</h3><p>En muchos cajeros, la tarjeta sale antes de entregar el efectivo.</p><p class="more">Evita: olvidar la tarjeta. Varía según el país y el banco: en algunos sale primero el dinero.</p>
+    </article>
+    <article class="card ex rv" tabindex="0">
+      <figure class="shot" data-img="enchufe" data-alt="Enchufe con polo a tierra frente a su tomacorriente"><figcaption>images/enchufe.jpg</figcaption></figure>
+      <h3>Enchufe con polo a tierra</h3><p>El polo a tierra obliga a enchufar en una sola posición.</p><p class="more">Método de contacto (por forma). Evita: invertir la conexión.</p>
+    </article>
+    <article class="card ex rv" tabindex="0">
+      <figure class="shot" data-img="cinturon" data-alt="Tablero de carro con la luz de cinturón encendida"><figcaption>images/cinturon.jpg</figcaption></figure>
+      <h3>Alerta del cinturón</h3><p>Una luz y una señal sonora insisten hasta que lo abrochas.</p><p class="more">Método de advertencia: avisa, pero depende de que la persona reaccione.</p>
+    </article>
+  </div>
+  <template class="detail">
+<h3>Cada ejemplo, con su clasificación</h3>
+<dl class="d-dl">
+<dt>Tarjeta SIM</dt><dd>Método de contacto, de control. Sin la esquina cortada podría colocarse de cuatro formas (All About Lean, s. f.).</dd>
+<dt>Microondas</dt><dd>De control. La norma de la FDA en EE. UU. (21 CFR 1030.10) exige al menos dos seguros de puerta. Al menos uno no debe poder accionarse con el cuerpo humano ni con un objeto de 10 cm de largo, y la falla de un solo componente no puede dejar inoperantes todos los seguros. También exige un monitoreo de los seguros (FDA, s. f.).</dd>
+<dt>Surtidor de combustible</dt><dd>De contacto y de control, pero en un solo sentido. En Europa, un estándar fija que la boquilla de diésel debe medir más de 23,6 mm y la de gasolina menos de 21,3 mm; así la de diésel no cabe en un carro a gasolina, pero la de gasolina sí cabe en uno diésel (Oficina Europea de Patentes, 2007). En EE. UU. las boquillas miden aproximadamente 13/16 de pulgada (gasolina sin plomo) y 15/16 (diésel de vehículos pequeños) (U.S. Patent No. 9,415,995 B2). Por eso BMW instala un bloqueo en el cuello de llenado de sus modelos diésel (BMW Group, s. f.).</dd>
+<dt>Cajero automático</dt><dd>De control. En muchos cajeros la tarjeta sale antes del dinero, para que no se olvide (All About Lean, s. f.). El orden varía: por ejemplo, el banco central de Nigeria indica entregar el efectivo antes que la tarjeta (Public Digital, 2026).</dd>
+<dt>Enchufe con polo a tierra</dt><dd>De contacto: las clavijas de forma y posición distintas fijan una sola orientación.</dd>
+<dt>Alerta del cinturón</dt><dd>De advertencia: avisa, pero depende de que la persona reaccione.</dd>
+</dl>
+<div class="d-callout"><b>Datos que varían.</b> Las medidas de las boquillas, el orden de entrega en los cajeros y los detalles de los carros dependen del país, el banco y el fabricante.</div>
+</template>
+  <aside class="notes">
+    <h4>Ejemplos cotidianos (~1 min 20 s) · Expositor 3 abre</h4>
+    <ul>
+      <li>Escoger tres o cuatro y contarlos con calma; no hace falta recitar los seis.</li>
+      <li>Identificar cuáles son de control (SIM, microondas, surtidor, enchufe, cajero) y cuál es de advertencia (cinturón).</li>
+      <li>Surtidor: la diferencia de diámetro protege a los carros a gasolina de recibir diésel, pero no al revés. Por eso algunos fabricantes agregan un bloqueo en los tanques diésel.</li>
+      <li>Cajero y surtidor varían por país, marca y modelo; hablar de «muchos» casos, no de todos.</li>
+      <li>Las imágenes son ilustraciones generadas con IA.</li>
+    </ul>
+  </aside>
+</section>
+
+<!-- 12. Industria -->
+<section class="slide light" data-presenter="3" data-title="En la planta">
+  <h2>En la planta: guías, kits, sensores y torque</h2>
+  <div class="grid4">
+    <article class="card ex rv" tabindex="0">
+      <figure class="shot sq" data-img="industrial-plantilla" data-alt="Plantilla de ensamble con una pieza en su alojamiento"><figcaption>images/industrial-plantilla.jpg</figcaption></figure>
+      <h3>Plantillas y guías</h3><p>La pieza solo se apoya en la posición correcta.</p><p class="more">Método de contacto. Evita: piezas giradas o mal ubicadas.</p>
+    </article>
+    <article class="card ex rv" tabindex="0">
+      <figure class="shot sq" data-img="industrial-kit" data-alt="Bandeja de kit con un hueco por cada pieza"><figcaption>images/industrial-kit.jpg</figcaption></figure>
+      <h3>Kits y bandejas</h3><p>Cada pieza tiene su hueco: si queda uno vacío, falta una pieza.</p><p class="more">Método de valor fijo. Mismo principio del recipiente con resortes de Shingo.</p>
+    </article>
+    <article class="card ex rv" tabindex="0">
+      <figure class="shot sq" data-img="industrial-vision" data-alt="Cámara de visión artificial sobre una banda transportadora"><figcaption>images/industrial-vision.jpg</figcaption></figure>
+      <h3>Sensores y visión artificial</h3><p>Verifican presencia, posición o color antes de continuar.</p><p class="more">Pueden usarse como control o como advertencia.</p>
+    </article>
+    <article class="card ex rv" tabindex="0">
+      <figure class="shot sq" data-img="industrial-torque" data-alt="Atornilladora electrónica con pantalla de confirmación"><figcaption>images/industrial-torque.jpg</figcaption></figure>
+      <h3>Control de torque</h3><p>La herramienta mide el apriete y cuenta los tornillos de la secuencia.</p><p class="more">Método de valor fijo. Evita: tornillos flojos o faltantes.</p>
+    </article>
+  </div>
+  <template class="detail">
+<h3>Qué hay detrás de cada ejemplo</h3>
+<ul>
+<li><b>Plantillas y guías (contacto):</b> alojamientos con la forma de la pieza, que solo la reciben en la posición correcta.</li>
+<li><b>Kits y bandejas (valor fijo):</b> un hueco por pieza; un hueco vacío delata una pieza faltante.</li>
+<li><b>Sensores y visión artificial:</b> comprueban presencia, posición o color antes de que el producto avance. Según el diseño, detienen la línea (control) o emiten una alerta (advertencia).</li>
+<li><b>Herramientas de apriete con control de torque (valor fijo):</b> miden el apriete y pueden contar los tornillos de una secuencia.</li>
+</ul>
+<h3>Qué errores atacan los ejemplos de la literatura</h3>
+<p>El libro <i>Poka-Yoke</i> (1988) agrupa 240 ejemplos de plantas japonesas por tipo de error, entre ellos: errores de procesamiento, ensamble, montaje e inserción; inclusión de piezas equivocadas; omisiones de ensamble o de proceso; errores de medición; errores de preparación (<i>set-up</i>); errores de empaque; y moldes o dados que no corresponden (Nikkan Kogyo Shimbun, 1988). Muestra que el Poka Yoke puede aplicarse en casi cualquier etapa del proceso.</p>
+<p>Por su parte, Shingo reúne 112 ejemplos en su libro de 1986 y la mayoría costaba menos de 100 dólares (Shingo, 1986).</p>
+<p class="d-src">Las imágenes de esta diapositiva son ilustraciones generadas con IA.</p>
+</template>
+  <aside class="notes">
+    <h4>Industria (~1 min) · Expositor 3</h4>
+    <ul>
+      <li>Aquí se ve el ciclo completo: guías (contacto), kits (valor fijo), visión artificial y herramientas con control de torque (detección y control).</li>
+      <li>Shingo reunió 112 ejemplos de dispositivos en su libro de 1986, la mayoría con costo menor a 100 dólares. Muchas soluciones son simples.</li>
+      <li>Si el grupo tiene una experiencia propia de prácticas o visita a planta, es buen momento para contarla.</li>
+      <li>Las imágenes son ilustraciones generadas con IA, no fotografías de plantas reales.</li>
+    </ul>
+  </aside>
+</section>
+
+<!-- 13. Otros sectores -->
+<section class="slide dark" data-presenter="3" data-title="Otros sectores">
+  <h2>Más allá de la manufactura</h2>
+  <div class="sectors">
+    <div class="tabs" role="tablist" aria-label="Sectores">
+      <button role="tab" class="tab on" data-t="salud">Salud</button>
+      <button role="tab" class="tab" data-t="software">Software</button>
+      <button role="tab" class="tab" data-t="alimentos">Alimentos</button>
+      <button role="tab" class="tab" data-t="aviacion">Aviación</button>
+      <button role="tab" class="tab" data-t="logistica">Logística</button>
+    </div>
+    <div class="tabpanels">
+      <div class="tp on" id="tp-salud">
+        <h3>Salud</h3>
+        <ul>
+          <li>Gases medicinales: los sistemas de pines (cilindros) y de diámetros (tomas de pared, DISS) impiden conectar un gas donde va otro.</li>
+          <li>Conectores enterales ENFit (norma ISO 80369-3): no encajan con líneas intravenosas.</li>
+          <li>Conteo de gasas e instrumental antes de cerrar una cirugía.</li>
+        </ul>
+      </div>
+      <div class="tp" id="tp-software">
+        <h3>Software</h3>
+        <ul>
+          <li>Confirmación antes de borrar o enviar, con el nombre de lo que se va a perder.</li>
+          <li>Validación de campos: correo, fecha o teléfono con formato correcto.</li>
+          <li>Botón de pago desactivado hasta que el formulario esté completo.</li>
+          <li>Rama principal del código protegida: exige revisión antes de aprobar cambios.</li>
+        </ul>
+      </div>
+      <div class="tp" id="tp-alimentos">
+        <h3>Alimentos</h3>
+        <ul>
+          <li>Detectores de metales en línea que rechazan el producto contaminado.</li>
+          <li>Balanzas con rango aceptable: fuera del peso, no pasa.</li>
+          <li>Utensilios de color distinto por alérgeno o tipo de alimento.</li>
+        </ul>
+      </div>
+      <div class="tp" id="tp-aviacion">
+        <h3>Aviación</h3>
+        <ul>
+          <li>Listas de verificación para las fases críticas del vuelo.</li>
+          <li>Bocina de advertencia si se intenta aterrizar sin el tren de aterrizaje asegurado.</li>
+          <li>Alarma de configuración de despegue en aviones como el Boeing 737: suena si los flaps o el compensador no están en posición.</li>
+        </ul>
+      </div>
+      <div class="tp" id="tp-logistica">
+        <h3>Logística</h3>
+        <ul>
+          <li>Escáner de código de barras que valida cada producto antes de cerrar el pedido.</li>
+          <li>Sistemas de picking guiado por luces que señalan el estante correcto.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <template class="detail">
+<h3>Salud</h3>
+<ul>
+<li><b>Gases medicinales.</b> El sistema de índice de pines (PISS) usa posiciones de pines únicas por gas entre la válvula del cilindro y el regulador; se introdujo en los años 50 y está normalizado en EN ISO 407. El sistema de índice de diámetros (DISS) se usa en conexiones de menor presión (Wikipedia, s. f.-b).</li>
+<li><b>Ningún sistema es infalible.</b> El sistema de pines puede burlarse si los pines se quitan, se dañan o se corroen, si se agregan arandelas extra o, en algunas válvulas, invirtiendo el cilindro (Wikipedia, s. f.-b). En Japón se documentó la falla de un sistema de pines de tuberías de gas que se consideraba «a prueba de tontos» (JA Clinical Reports, 2016).</li>
+<li><b>ENFit.</b> Es el conector enteral estandarizado (ISO 80369-3). Está diseñado para que solo se conecten entre sí dispositivos enterales y no se confunda una línea de alimentación con una intravenosa (Compat, s. f.).</li>
+<li>Conteo de gasas e instrumental antes de cerrar una cirugía.</li>
+</ul>
+<h3>Software</h3>
+<ul>
+<li>Confirmaciones antes de borrar o enviar.</li>
+<li>Validación de campos: correo, fecha o teléfono con formato correcto.</li>
+<li>Botones desactivados hasta completar lo obligatorio.</li>
+<li>Ramas protegidas en repositorios de código, que exigen revisión antes de aprobar cambios.</li>
+</ul>
+<h3>Alimentos y logística</h3>
+<ul>
+<li>Detectores de metales en línea y balanzas con rango aceptable de peso.</li>
+<li>Utensilios con códigos de color por tipo de alimento o alérgeno.</li>
+<li>Escáneres que validan cada producto antes de cerrar un pedido.</li>
+</ul>
+<h3>Aviación</h3>
+<ul>
+<li>En el Boeing 737, una bocina continua advierte cuando se intenta aterrizar sin que el tren de aterrizaje esté abajo y asegurado (SmartCockpit, s. f.).</li>
+<li>La alarma de configuración de despegue se arma en tierra al avanzar las palancas de empuje y suena si el avión no está configurado para despegar, por ejemplo con los flaps o el compensador fuera de rango (SmartCockpit, s. f.; Brainscape, s. f.).</li>
+<li>Listas de verificación para las fases críticas del vuelo.</li>
+</ul>
+</template>
+  <aside class="notes">
+    <h4>Otros sectores (~1 min) · Expositor 3</h4>
+    <ul>
+      <li>Elegir dos sectores según el público de la clase; software y salud suelen conectar mejor.</li>
+      <li>Idea: Poka Yoke no es solo metal y sensores, es cualquier diseño que dificulte equivocarse. Un formulario bien hecho es un Poka Yoke.</li>
+      <li>Hacer clic en las pestañas para cambiar de sector.</li>
+    </ul>
+  </aside>
+</section>
+
+<!-- 14. Herramientas -->
+<section class="slide light" data-presenter="3" data-title="Herramientas">
+  <h2>Herramientas para encontrarlo, entenderlo y asegurarlo</h2>
+  <div class="tools">
+    <div class="tcol">
+      <h3>Encontrar el problema</h3>
+      <div class="card tool" tabindex="0"><b>Diagrama de Pareto</b><span>Muestra qué pocos defectos causan la mayoría de los problemas.</span></div>
+      <div class="card tool" tabindex="0"><b>Gemba walk</b><span>Ir a ver el proceso real y hablar con quien lo hace.</span></div>
+      <div class="card tool" tabindex="0"><b>AMEF (FMEA)</b><span>Anticipa fallas posibles y las prioriza por riesgo.</span></div>
+    </div>
+    <div class="tcol">
+      <h3>Entender la causa</h3>
+      <div class="card tool" tabindex="0"><b>5 porqués</b><span>Preguntar «¿por qué?» hasta llegar a la causa raíz.</span></div>
+      <div class="card tool" tabindex="0"><b>Diagrama de Ishikawa</b><span>Ordena las causas en máquina, método, material, mano de obra, medio y medición.</span></div>
+      <div class="card tool" tabindex="0"><b>8D o A3</b><span>Formatos para resolver y documentar un problema en equipo.</span></div>
+    </div>
+    <div class="tcol">
+      <h3>Asegurar la solución</h3>
+      <div class="card tool" tabindex="0"><b>Listas de verificación</b><span>Para lo que no se puede automatizar.</span></div>
+      <div class="card tool" tabindex="0"><b>5S y control visual</b><span>Colores, sombras de herramientas y señales claras.</span></div>
+      <div class="card tool" tabindex="0"><b>Jidoka, andon y sensores</b><span>La máquina se detiene y avisa cuando algo no está bien.</span></div>
+    </div>
+  </div>
+  <template class="detail">
+<h3>Para encontrar el problema</h3>
+<dl class="d-dl">
+<dt>Diagrama de Pareto</dt><dd>Gráfico de barras ordenadas que muestra qué pocas causas o defectos producen la mayor parte de los problemas.</dd>
+<dt>Gemba walk</dt><dd>Ir al lugar donde ocurre el trabajo, observar el proceso real y hablar con quien lo hace.</dd>
+<dt>AMEF (FMEA)</dt><dd>Análisis del modo y efecto de las fallas: se anticipan las fallas posibles, sus efectos y causas, y se priorizan según el riesgo.</dd>
+</dl>
+<h3>Para entender la causa</h3>
+<dl class="d-dl">
+<dt>5 porqués</dt><dd>Preguntar «¿por qué?» varias veces hasta llegar a la causa raíz. Es una técnica asociada al Sistema de Producción Toyota.</dd>
+<dt>Diagrama de Ishikawa</dt><dd>Diagrama de causa y efecto que agrupa las causas en categorías, como mano de obra, método, máquina, material, medio ambiente y medición.</dd>
+<dt>8D y A3</dt><dd>Formatos estructurados para resolver y documentar un problema en equipo.</dd>
+</dl>
+<h3>Para asegurar la solución</h3>
+<dl class="d-dl">
+<dt>Listas de verificación</dt><dd>Sirven en tareas que no se pueden automatizar.</dd>
+<dt>5S y control visual</dt><dd>Clasificar, ordenar, limpiar, estandarizar y sostener; apoyados en colores, sombras de herramientas y señales claras.</dd>
+<dt>Jidoka y andon</dt><dd>Jidoka es dar a la máquina la capacidad de detenerse cuando detecta una anormalidad; el andon es la señal que avisa del problema.</dd>
+<dt>Sensores y visión artificial</dt><dd>Verifican automáticamente presencia, posición o características de las piezas.</dd>
+</dl>
+<p class="d-src">Descripciones generales de herramientas de gestión de calidad, para ubicar cada una en el proceso de mejora.</p>
+</template>
+  <aside class="notes">
+    <h4>Herramientas (~1 min) · Expositor 3</h4>
+    <ul>
+      <li>Poka Yoke casi nunca va solo: viene al final de un análisis. Primero se encuentra el problema, luego se entiende y después se asegura.</li>
+      <li>Mencionar una herramienta por columna y dar un ejemplo corto. No leer todas.</li>
+      <li>Conectar con los cinco pasos de la diapositiva 9.</li>
+    </ul>
+  </aside>
+</section>
+
+<!-- 15. Beneficios y límites -->
+<section class="slide dark" data-presenter="3" data-title="Beneficios y límites">
+  <h2>Qué gana una empresa y dónde se queda corto</h2>
+  <div class="split bl">
+    <div>
+      <h3 class="sub">El costo del error crece con la distancia</h3>
+      <div class="cost" role="img" aria-label="Gráfico ilustrativo: prevenir cuesta 1, corregir 10 y la falla ante el cliente 100">
+        <div class="cbar" style="--h:10%"><b>1</b><span>Prevenir</span></div>
+        <div class="cbar" style="--h:38%"><b>10</b><span>Corregir</span></div>
+        <div class="cbar" style="--h:100%"><b>100</b><span>Falla con el cliente</span></div>
+      </div>
+      <p class="small">Regla 1-10-100, atribuida a Labovitz y Chang (1992). Es una referencia aproximada, no una cifra exacta; la escala del gráfico es ilustrativa.</p>
+    </div>
+    <div class="bl-cols">
+      <div class="card" tabindex="0">
+        <h3>Beneficios</h3>
+        <ul>
+          <li>Menos defectos y reprocesos.</li>
+          <li>Suelen ser simples y baratos: de los 112 ejemplos de Shingo (1986), la mayoría costaba menos de 100 dólares.</li>
+          <li>Muchas ideas nacen en la línea, con participación de los operarios.</li>
+          <li>Menos dependencia de la atención y la memoria.</li>
+        </ul>
+      </div>
+      <div class="card limit" tabindex="0">
+        <h3>Límites</h3>
+        <ul>
+          <li>No reemplaza la capacitación ni la cultura de calidad.</li>
+          <li>Pueden fallar o burlarse: en gases medicinales se han reportado casos con sistemas «a prueba de error».</li>
+          <li>No frenan errores deliberados.</li>
+          <li>Hay que mantenerlos y verificarlos.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <template class="detail">
+<h3>La regla 1-10-100</h3>
+<p>Dice que prevenir un problema cuesta aproximadamente 1, corregirlo una vez ocurrido cuesta 10 y que falle ante el cliente cuesta 100. Se atribuye a George Labovitz y Yu Sang Chang (1992), originalmente en el contexto de la calidad de datos, y hoy se cita en manufactura y software como regla aproximada, no como medición exacta (AKF Partners, s. f.).</p>
+<h3>Beneficios</h3>
+<ul>
+<li>Menos defectos y reprocesos.</li>
+<li>Soluciones simples y baratas: la mayoría de los 112 ejemplos de Shingo costaba menos de 100 dólares (Shingo, 1986).</li>
+<li>Participación de los operarios: muchas ideas de Poka Yoke nacen en la línea y se implementan con apoyo de ingeniería (Nikkan Kogyo Shimbun, 1988).</li>
+<li>Menos dependencia de la atención y la memoria de las personas.</li>
+</ul>
+<h3>Límites</h3>
+<ul>
+<li>No reemplaza la capacitación ni la cultura de calidad.</li>
+<li>Puede burlarse o fallar. Ejemplo: el sistema de pines de gases medicinales puede evadirse si se retiran o dañan los pines (Wikipedia, s. f.-b).</li>
+<li>Los errores deliberados o intencionales son más difíciles de frenar.</li>
+<li>Requiere mantenimiento y verificación. En los hornos microondas, la norma exige incluso un monitoreo de los seguros de puerta (FDA, s. f.).</li>
+</ul>
+<div class="d-callout"><b>Cómo leer el gráfico.</b> La escala de las barras es ilustrativa. Lo importante es la idea: cuanto más lejos llega el error, más cuesta corregirlo.</div>
+</template>
+  <aside class="notes">
+    <h4>Beneficios y límites (~1 min) · Expositor 3</h4>
+    <ul>
+      <li>La regla 1-10-100 es una referencia común en calidad (se atribuye a Labovitz y Chang, 1992), no una medición exacta; presentarla como orden de magnitud.</li>
+      <li>Shingo presenta 112 ejemplos en su libro de 1986, la mayoría con costo menor a 100 dólares.</li>
+      <li>Límites: ningún sistema es infalible. Hay reportes de fallas en sistemas de pines de gases medicinales cuando las guías se dañan o se retiran.</li>
+      <li>Cerrar con la idea de equilibrio: simple, útil y probado con quienes lo usan.</li>
+    </ul>
+  </aside>
+</section>
+
+<!-- 16. Conclusiones -->
+<section class="slide light" data-presenter="3" data-title="Conclusiones">
+  <h2>Lo que nos llevamos</h2>
+  <div class="trio takeaways">
+    <article class="card rv" tabindex="0"><span class="shape circle big"></span><h3>El error es del proceso</h3><p>Las personas se equivocan. El trabajo del diseño es que ese error no se convierta en defecto.</p></article>
+    <article class="card rv" tabindex="0"><span class="shape square big"></span><h3>Mejor impedir que avisar</h3><p>Primero eliminar o prevenir; si no se puede, detectar y avisar rápido.</p></article>
+    <article class="card rv" tabindex="0"><span class="shape triangle big"></span><h3>Simple, probado y aplicado</h3><p>Una muesca, un color o un sensor, pero validado con quienes lo usan.</p></article>
+  </div>
+  <p class="ask">Pregunta para el público: ¿en qué tarea de tu día a día podrías hacer que equivocarse sea imposible?</p>
+  <template class="detail">
+<h3>Preguntas para aplicar el Poka Yoke a una tarea</h3>
+<ol class="d-ol">
+<li>¿Qué error se repite y cuánto cuesta?</li>
+<li>¿Qué lo causa realmente?</li>
+<li>¿Se puede eliminar el paso o hacer imposible el error?</li>
+<li>Si no, ¿conviene controlar o advertir?</li>
+<li>¿Cómo lo probamos con quienes lo usan, incluyendo intentos de burlarlo?</li>
+<li>¿Cómo vamos a medir si funcionó?</li>
+</ol>
+<div class="d-callout"><b>Para llevar.</b> El error es del proceso, no de la persona. Primero eliminar o prevenir; si no se puede, detectar y avisar rápido. Y siempre: simple, probado y aplicado.</div>
+<p class="d-src">Guía de preguntas elaborada por el grupo a partir de los conceptos de la presentación.</p>
+</template>
+  <aside class="notes">
+    <h4>Cierre (~40 s) · Los tres expositores</h4>
+    <ul>
+      <li>Cada expositor lee una de las tres conclusiones (círculo, cuadrado, triángulo).</li>
+      <li>Lanzar la pregunta y abrir turno de preguntas.</li>
+    </ul>
+  </aside>
+</section>
+
+<!-- 17. Autoevaluación -->
+<section class="slide light" data-presenter="0" data-title="Autoevaluación">
+  <h2>Pon a prueba lo aprendido</h2>
+  <p class="small hint">Sección extra para quienes visitan la página; no forma parte de la exposición. Elige una respuesta en cada pregunta.</p>
+  <div class="quiz" id="quiz"></div>
+</section>
+
+<!-- 18. Bibliografía -->
+<section class="slide dark" data-presenter="0" data-title="Bibliografía">
+  <h2>Bibliografía</h2>
+  <p class="small hint">Formato APA 7. Las páginas web se consultaron el 13 de octubre de 2026. En los textos de «Detalles» se citan con autor y año.</p>
+  <ul class="biblio">
+    <li>AKF Partners. (s. f.). <em>1-10-100 rule in quality software development</em>. <a href="https://akfpartners.com/growth-blog/1-10-100-rule-in-quality-software-development/" target="_blank" rel="noopener noreferrer">https://akfpartners.com/growth-blog/1-10-100-rule-in-quality-software-development/</a></li>
+    <li>All About Lean. (s. f.). <em>Poka yoke directions</em>. <a href="https://www.allaboutlean.com/poka-yoke-directions/" target="_blank" rel="noopener noreferrer">https://www.allaboutlean.com/poka-yoke-directions/</a></li>
+    <li>BMW Group PressClub. (s. f.). <em>Fuelling Protection System as standard for all BMW diesel models</em>. <a href="https://www.press.bmwgroup.com/global/article/detail/T0011579EN" target="_blank" rel="noopener noreferrer">https://www.press.bmwgroup.com/global/article/detail/T0011579EN</a></li>
+    <li>Brainscape. (s. f.). <em>Warning systems</em> [Tarjetas de estudio]. <a href="https://blog.brainscape.com/flashcards/9769475/packs/17327224" target="_blank" rel="noopener noreferrer">https://blog.brainscape.com/flashcards/9769475/packs/17327224</a></li>
+    <li>Comité Europeo de Normalización. (s. f.). <em>EN ISO 407: Small medical gas cylinders. Pin-index yoke-type valve connections</em>.</li>
+    <li>Compat. (s. f.). <em>ENFit: Promoting patient safety through a unique enteral-specific design</em>. <a href="https://www.compat.com/enfit/" target="_blank" rel="noopener noreferrer">https://www.compat.com/enfit/</a></li>
+    <li>EcuRed. (s. f.). <em>Shigeo Shingo</em>. <a href="https://www.ecured.cu/Shigeo_Shingo" target="_blank" rel="noopener noreferrer">https://www.ecured.cu/Shigeo_Shingo</a></li>
+    <li>Elsmar Cove. (s. f.). <em>Error proofing</em> [Diapositivas]. <a href="https://elsmar.com/Error_Proofing/sld114.htm" target="_blank" rel="noopener noreferrer">https://elsmar.com/Error_Proofing/sld114.htm</a> y <a href="https://elsmar.com/8D/sld164.htm" target="_blank" rel="noopener noreferrer">https://elsmar.com/8D/sld164.htm</a></li>
+    <li>Gestiopolis. (s. f.). <em>Poka Yoke: técnicas para prevenir errores y defectos</em>. <a href="https://www.gestiopolis.com/poka-yoke-tecnicas-prevenir-errores-defectos/" target="_blank" rel="noopener noreferrer">https://www.gestiopolis.com/poka-yoke-tecnicas-prevenir-errores-defectos/</a></li>
+    <li>JA Clinical Reports. (2016). <em>Failure of a «foolproof» pin-index medical pipeline system</em>. <a href="https://jaclinicalreports.springeropen.com/articles/10.1186/s40981-016-0044-7" target="_blank" rel="noopener noreferrer">https://jaclinicalreports.springeropen.com/articles/10.1186/s40981-016-0044-7</a></li>
+    <li>McBride, D. (s. f.). <em>Using mistake-proofing in product design</em>. Reliable Plant. <a href="https://reliableplant.com/Articles/Print/13159?id=13159" target="_blank" rel="noopener noreferrer">https://reliableplant.com/Articles/Print/13159?id=13159</a></li>
+    <li>MRPeasy. (s. f.). <em>What is poka-yoke and how to use it in manufacturing?</em> <a href="https://www.mrpeasy.com/blog/poka-yoke/" target="_blank" rel="noopener noreferrer">https://www.mrpeasy.com/blog/poka-yoke/</a></li>
+    <li>Nikkan Kogyo Shimbun (Ed.). (1988). <em>Poka-yoke: Improving product quality by preventing defects</em>. Productivity Press.</li>
+    <li>Oficina Europea de Patentes. (2007). <em>Misfuelling prevention device</em> (Patente EP 1 790 517 A2). <a href="https://data.epo.org/publication-server/rest/v1.0/publication-dates/20070530/patents/EP1790517NWA2/document.html" target="_blank" rel="noopener noreferrer">https://data.epo.org/publication-server/rest/v1.0/publication-dates/20070530/patents/EP1790517NWA2/document.html</a></li>
+    <li>Organización Internacional de Normalización. (s. f.). <em>ISO 80369-3: Small-bore connectors for liquids and gases in healthcare applications. Part 3: Connectors for enteral applications</em>.</li>
+    <li>Public Digital. (2026, abril). [Artículo sobre el orden de entrega de la tarjeta y el efectivo en cajeros automáticos]. <a href="https://public.digital/pd-insights/blog/2026/04/hidden-value-of-service-design" target="_blank" rel="noopener noreferrer">https://public.digital/pd-insights/blog/2026/04/hidden-value-of-service-design</a></li>
+    <li>QMS2Go. (s. f.). <em>Correcting human errors the Japanese way with poka-yoke</em>. <a href="https://qms2go.com/learn/blog/correcting-human-errors-the-japanese-way-with-poka-yoke" target="_blank" rel="noopener noreferrer">https://qms2go.com/learn/blog/correcting-human-errors-the-japanese-way-with-poka-yoke</a></li>
+    <li>QualityGurus. (s. f.). <em>Shigeo Shingo</em>. <a href="https://www.qualitygurus.com/?p=287" target="_blank" rel="noopener noreferrer">https://www.qualitygurus.com/?p=287</a></li>
+    <li>RNA Automation. (s. f.). <em>Poka-yoke in manufacturing</em>. <a href="https://www.rnaautomation.com/blog/improve-productivity-poka-yoke/" target="_blank" rel="noopener noreferrer">https://www.rnaautomation.com/blog/improve-productivity-poka-yoke/</a></li>
+    <li>Saheb, J. (s. f.). <em>Mistake proofing</em> [Presentación]. SlideShare. <a href="https://www.slideshare.net/slideshow/pokayoke-tera-quality/27162252" target="_blank" rel="noopener noreferrer">https://www.slideshare.net/slideshow/pokayoke-tera-quality/27162252</a></li>
+    <li>Shingo, S. (1986). <em>Zero quality control: Source inspection and the poka-yoke system</em> (A. P. Dillon, Trad.). Productivity Press. (Obra original en japonés: <em>Furyō zero e no chōsen</em>).</li>
+    <li>SmartCockpit. (s. f.). <em>Boeing 737NG: Warning systems</em>. <a href="https://www.smartcockpit.com/?p=4187" target="_blank" rel="noopener noreferrer">https://www.smartcockpit.com/?p=4187</a></li>
+    <li>TechTarget. (s. f.). <em>Poka-yoke</em>. <a href="https://www.techtarget.com/searcherp/definition/poka-yoke" target="_blank" rel="noopener noreferrer">https://www.techtarget.com/searcherp/definition/poka-yoke</a></li>
+    <li>U.S. Food and Drug Administration. (s. f.). <em>21 CFR § 1030.10: Microwave ovens</em>. Legal Information Institute, Cornell Law School. <a href="https://www.law.cornell.edu/cfr/text/21/1030.10" target="_blank" rel="noopener noreferrer">https://www.law.cornell.edu/cfr/text/21/1030.10</a></li>
+    <li>U.S. Patent No. 9,415,995 B2. <em>Method and structure for prevention of incorrect fueling operations</em>. <a href="https://patents.google.com/patent/US9415995" target="_blank" rel="noopener noreferrer">https://patents.google.com/patent/US9415995</a></li>
+    <li>Vector Solutions. (2020, 15 de abril). <em>What is poka-yoke?</em> <a href="https://www.vectorsolutions.com/resources/blogs/what-is-poka-yoke/" target="_blank" rel="noopener noreferrer">https://www.vectorsolutions.com/resources/blogs/what-is-poka-yoke/</a></li>
+    <li>Wikipedia. (s. f.-a). <em>Poka-yoke</em>. <a href="https://en.wikipedia.org/wiki/Poka-yoke" target="_blank" rel="noopener noreferrer">https://en.wikipedia.org/wiki/Poka-yoke</a></li>
+    <li>Wikipedia. (s. f.-b). <em>Pin Index Safety System</em>. <a href="https://en.wikipedia.org/wiki/Pin_Index_Safety_System" target="_blank" rel="noopener noreferrer">https://en.wikipedia.org/wiki/Pin_Index_Safety_System</a></li>
+  </ul>
+  <p class="small">Las imágenes son ilustraciones generadas con IA, no fotografías. Los ejemplos cotidianos e industriales son referenciales y pueden variar por país, marca y modelo.</p>
+</section>
+
+</main>
+
+<footer class="chrome-bottom" id="botbar">
+  <button class="nav" id="prev" aria-label="Diapositiva anterior">&#8249;</button>
+  <div class="dots" id="dots"></div>
+  <span class="counter" id="counter">1 / 18</span>
+  <button class="btn-detail" id="detailBtn" aria-controls="detail" aria-expanded="false" title="Ampliar esta diapositiva (D)">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.6v.2"/></svg><span>Detalles</span>
+  </button>
+  <button class="nav" id="next" aria-label="Diapositiva siguiente">&#8250;</button>
+  <div class="progress" aria-hidden="true"><i id="bar"></i></div>
+</footer>
+
+<aside id="notes" class="notes-panel" hidden aria-label="Guion del expositor">
+  <div class="notes-head"><b>Guion del expositor</b><button id="notesClose" aria-label="Cerrar guion">Cerrar</button></div>
+  <div id="notesBody"></div>
+</aside>
+
+<div class="scrim" id="scrim"></div>
+
+<nav id="menu" class="drawer drawer-left" aria-label="Menú de la presentación" aria-hidden="true">
+  <div class="drawer-head"><b>Poka Yoke</b><button class="icon-btn" id="menuClose" aria-label="Cerrar menú">&#10005;</button></div>
+  <div class="drawer-body">
+    <p class="menu-sub">Ing. Métodos y Tiempos &middot; UFPS</p>
+    <div id="menuIndex"></div>
+    <h4 class="menu-h">Herramientas</h4>
+    <div class="menu-tools">
+      <div class="mt-row"><span>Cronómetro <b id="menuTime">00:00</b></span><span class="mt-btns"><button class="chip" id="mtToggle">Iniciar</button><button class="chip" id="mtReset">Reiniciar</button></span></div>
+      <button class="mt-item" id="mtNotes">Guion del expositor <kbd>N</kbd></button>
+      <button class="mt-item" id="mtRotate">Ver en horizontal (celular)</button>
+      <button class="mt-item" id="mtFs">Pantalla completa <kbd>F</kbd></button>
+      <button class="mt-item" id="mtShare">Compartir o copiar enlace</button>
+      <button class="mt-item" id="mtPrint">Imprimir o guardar en PDF</button>
+    </div>
+    <h4 class="menu-h">Atajos de teclado</h4>
+    <p class="menu-keys"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> moverse &nbsp; <kbd>D</kbd> detalles &nbsp; <kbd>N</kbd> guion &nbsp; <kbd>T</kbd> cronómetro &nbsp; <kbd>F</kbd> pantalla completa &nbsp; <kbd>Esc</kbd> cerrar</p>
+    <h4 class="menu-h">Equipo</h4>
+    <ul class="menu-team" id="menuTeam"></ul>
+  </div>
+</nav>
+
+<aside id="detail" class="drawer drawer-right" aria-label="Detalles de la diapositiva" aria-hidden="true">
+  <div class="drawer-head"><div><span class="d-kicker" id="detailKicker">Para saber más</span><b id="detailTitle">Detalles</b></div><button class="icon-btn" id="detailClose" aria-label="Cerrar detalles">&#10005;</button></div>
+  <div class="drawer-body detail-body" id="detailBody" tabindex="-1"></div>
+</aside>
+
+<div class="rotate-hint" id="rotateHint" hidden>
+  <p>Para ver mejor la presentación, usa el celular en horizontal.</p>
+  <div><button class="chip primary" id="hintRotate">Poner en horizontal</button><button class="chip" id="hintClose">Ahora no</button></div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<noscript><p style="position:fixed;inset:auto 0 0 0;background:#ffc21a;color:#0f2347;padding:12px;text-align:center">Esta presentación necesita JavaScript para pasar de diapositiva.</p></noscript>
+<script src="js/main.js"></script>
+</body>
+</html>
